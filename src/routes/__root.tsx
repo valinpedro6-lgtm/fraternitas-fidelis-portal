@@ -76,10 +76,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Organização juvenil dedicada à formação de caráter, disciplina e honra." },
       { name: "author", content: "Fraternitas Fidelis" },
       { property: "og:title", content: "Fraternitas Fidelis" },
-      { property: "og:description", content: "Você está preparado para algo maior?" },
+      { property: "og:description", content: "Organização juvenil dedicada à formação de caráter, disciplina e honra." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Fraternitas Fidelis" },
+      { name: "twitter:description", content: "Organização juvenil dedicada à formação de caráter, disciplina e honra." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/96f6e5f3-04dc-45f8-b384-369928b01549/id-preview-d52a6d42--b43f2eba-aa2d-4322-84c1-fee523dd9922.lovable.app-1778441222205.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/96f6e5f3-04dc-45f8-b384-369928b01549/id-preview-d52a6d42--b43f2eba-aa2d-4322-84c1-fee523dd9922.lovable.app-1778441222205.png" },
     ],
     links: [
       {

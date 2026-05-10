@@ -49,7 +49,15 @@ function QuizGate() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-background">
+      {/* fundo refinado */}
       <div className="pointer-events-none absolute inset-0 vignette" />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.5]"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 50% at 50% 30%, oklch(0.78 0.09 78 / 0.07), transparent 70%)",
+        }}
+      />
       <div className="grain pointer-events-none absolute inset-0" />
 
       <div className="relative mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-6 py-20 text-center">
@@ -63,31 +71,43 @@ function QuizGate() {
               transition={{ duration: 0.9, ease: "easeOut" }}
               className="flex flex-col items-center"
             >
-              <motion.img
-                src={logo}
-                alt="Fraternitas Fidelis"
-                className="h-20 w-20 opacity-95"
-                initial={{ opacity: 0, scale: 0.92 }}
-                animate={{ opacity: 0.95, scale: 1 }}
-                transition={{ duration: 1.6, ease: "easeOut" }}
-              />
-              <div className="mt-10 divider-line w-24" />
-              <h1 className="mt-10 font-serif text-4xl leading-tight text-foreground md:text-6xl">
+              <div className="relative">
+                <div
+                  className="absolute inset-0 -z-10 blur-3xl"
+                  style={{
+                    background:
+                      "radial-gradient(circle, oklch(0.78 0.09 78 / 0.18), transparent 70%)",
+                  }}
+                />
+                <img
+                  src={logo}
+                  alt="Fraternitas Fidelis"
+                  className="h-24 w-24 animate-emblem opacity-95"
+                />
+              </div>
+
+              <div className="mt-10 ornament">FRATERNITAS · FIDELIS</div>
+
+              <h1 className="mt-10 font-serif text-5xl leading-[1.05] text-foreground md:text-7xl">
                 Você está preparado<br />
-                <span className="italic text-foreground/80">para algo maior?</span>
+                <span className="italic text-shimmer">para algo maior?</span>
               </h1>
-              <p className="mt-6 max-w-md text-sm tracking-wider2 text-muted-foreground uppercase">
-                Responda algumas perguntas antes de prosseguir.
+
+              <p className="mt-8 max-w-md text-[11px] tracking-emblem text-muted-foreground">
+                RESPONDA · ANTES · DE · PROSSEGUIR
               </p>
+
               <button
                 onClick={() => setStage("quiz")}
-                className="mt-12 group inline-flex items-center gap-3 border border-foreground/40 px-8 py-3 text-[11px] tracking-emblem text-foreground transition hover:border-foreground hover:bg-foreground hover:text-background"
+                className="group relative mt-12 inline-flex items-center gap-3 overflow-hidden border border-foreground/40 px-10 py-3.5 text-[11px] tracking-emblem text-foreground transition hover:border-accent"
               >
-                INICIAR
-                <span className="inline-block transition group-hover:translate-x-1">→</span>
+                <span className="absolute inset-0 -z-10 translate-y-full bg-foreground transition-transform duration-500 ease-out group-hover:translate-y-0" />
+                <span className="transition group-hover:text-background">INICIAR</span>
+                <span className="inline-block transition group-hover:translate-x-1 group-hover:text-background">→</span>
               </button>
-              <p className="mt-16 text-[10px] tracking-emblem text-muted-foreground/50">
-                FIDES · DISCIPLINA · HONOR
+
+              <p className="mt-20 text-[10px] tracking-emblem text-muted-foreground/40">
+                EST · MMXXV
               </p>
             </motion.div>
           )}
@@ -101,28 +121,31 @@ function QuizGate() {
               transition={{ duration: 0.5 }}
               className="flex w-full flex-col items-center"
             >
-              <div className="text-[10px] tracking-emblem text-muted-foreground/70">
-                {String(step + 1).padStart(2, "0")} / {String(QUESTIONS.length).padStart(2, "0")}
+              <div className="text-[10px] tracking-emblem text-accent/80">
+                {String(step + 1).padStart(2, "0")} <span className="text-muted-foreground/50">/ {String(QUESTIONS.length).padStart(2, "0")}</span>
               </div>
-              <div className="mt-4 h-px w-40 bg-border">
-                <div
-                  className="h-px bg-foreground transition-all duration-700"
-                  style={{ width: `${((step) / QUESTIONS.length) * 100}%` }}
+              <div className="mt-5 h-px w-56 overflow-hidden bg-border">
+                <motion.div
+                  className="h-px bg-gold"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${((step + 1) / QUESTIONS.length) * 100}%` }}
+                  transition={{ duration: 0.7, ease: "easeOut" }}
                 />
               </div>
-              <h2 className="mt-12 max-w-xl font-serif text-3xl leading-snug text-foreground md:text-4xl">
+              <h2 className="mt-14 max-w-2xl font-serif text-3xl leading-snug text-foreground md:text-5xl">
                 {QUESTIONS[step]}
               </h2>
-              <div className="mt-14 flex items-center gap-6">
+              <div className="mt-16 flex items-center gap-5">
                 <button
                   onClick={() => answer(true)}
-                  className="min-w-[140px] border border-foreground/50 px-8 py-3 text-[11px] tracking-emblem text-foreground transition hover:bg-foreground hover:text-background"
+                  className="group relative min-w-[160px] overflow-hidden border border-foreground/60 px-8 py-3.5 text-[11px] tracking-emblem text-foreground transition hover:border-accent"
                 >
-                  SIM
+                  <span className="absolute inset-0 -z-10 translate-y-full bg-foreground transition-transform duration-500 group-hover:translate-y-0" />
+                  <span className="transition group-hover:text-background">SIM</span>
                 </button>
                 <button
                   onClick={() => answer(false)}
-                  className="min-w-[140px] border border-border px-8 py-3 text-[11px] tracking-emblem text-muted-foreground transition hover:border-foreground/60 hover:text-foreground"
+                  className="min-w-[160px] border border-border px-8 py-3.5 text-[11px] tracking-emblem text-muted-foreground transition hover:border-foreground/60 hover:text-foreground"
                 >
                   NÃO
                 </button>
@@ -138,17 +161,19 @@ function QuizGate() {
               transition={{ duration: 0.9 }}
               className="flex flex-col items-center"
             >
-              <img src={logo} alt="" className="h-16 w-16 opacity-90" />
-              <div className="mt-8 divider-line w-24" />
-              <h2 className="mt-10 max-w-xl font-serif text-3xl leading-snug md:text-4xl">
-                Talvez você esteja pronto para conhecer a{" "}
-                <span className="italic">Fraternitas Fidelis.</span>
+              <img src={logo} alt="" className="h-20 w-20 animate-emblem opacity-95" />
+              <div className="mt-8 ornament">ACESSO · CONCEDIDO</div>
+              <h2 className="mt-10 max-w-2xl font-serif text-3xl leading-snug md:text-5xl">
+                Talvez você esteja pronto<br />
+                para conhecer a{" "}
+                <span className="italic text-gold">Fraternitas Fidelis.</span>
               </h2>
               <button
                 onClick={() => navigate({ to: "/instituicao" })}
-                className="mt-12 border border-foreground px-10 py-3 text-[11px] tracking-emblem text-foreground transition hover:bg-foreground hover:text-background"
+                className="group relative mt-14 overflow-hidden border border-foreground px-12 py-3.5 text-[11px] tracking-emblem text-foreground transition hover:border-accent"
               >
-                PROSSEGUIR →
+                <span className="absolute inset-0 -z-10 translate-y-full bg-foreground transition-transform duration-500 group-hover:translate-y-0" />
+                <span className="transition group-hover:text-background">PROSSEGUIR →</span>
               </button>
             </motion.div>
           )}
@@ -162,14 +187,14 @@ function QuizGate() {
               className="flex flex-col items-center"
             >
               <div className="divider-line w-16" />
-              <p className="mt-10 max-w-md font-serif text-2xl italic leading-relaxed text-muted-foreground">
-                Nem todo caminho serve para todos.
+              <p className="mt-12 max-w-md font-serif text-3xl italic leading-relaxed text-muted-foreground">
+                Nem todo caminho<br />serve para todos.
               </p>
               <button
                 onClick={restart}
                 className="mt-14 text-[10px] tracking-emblem text-muted-foreground/70 transition hover:text-foreground"
               >
-                REINICIAR
+                ← REINICIAR
               </button>
             </motion.div>
           )}

@@ -26,8 +26,31 @@ const schema = z.object({
   mensagem: z.string().trim().max(1000).optional().or(z.literal("")),
 });
 
+const EMAIL_DESTINO = "fraternitasfidelis@gmail.com";
+
+function buildMessage(d: { nome: string; idade: number; cidade: string; motivo: string; mensagem?: string }) {
+  return [
+    "Solicitação de Contato — Fraternitas Fidelis",
+    "",
+    `Nome completo: ${d.nome}`,
+    `Idade: ${d.idade}`,
+    `Cidade: ${d.cidade}`,
+    "",
+    "Motivo do interesse:",
+    d.motivo,
+    ...(d.mensagem && d.mensagem.trim()
+      ? ["", "Mensagem adicional:", d.mensagem.trim()]
+      : []),
+    "",
+    "—",
+    "Enviado através do site institucional.",
+  ].join("\n");
+}
+
 function ContactPage() {
   const [sent, setSent] = useState(false);
+  const [message, setMessage] = useState("");
+  const [copied, setCopied] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -45,9 +68,25 @@ function ContactPage() {
       return;
     }
     setErrors({});
+    setMessage(buildMessage(parsed.data));
     setSent(true);
-    toast.success("Solicitação registrada. Aguarde retorno.");
+    setCopied(false);
   };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(message);
+      setCopied(true);
+      toast.success("Mensagem copiada.");
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      toast.error("Não foi possível copiar. Selecione manualmente.");
+    }
+  };
+
+  const mailtoHref = `mailto:${EMAIL_DESTINO}?subject=${encodeURIComponent(
+    "Solicitação de Contato — Fraternitas Fidelis",
+  )}&body=${encodeURIComponent(message)}`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -73,21 +112,72 @@ function ContactPage() {
 
           {sent ? (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              className="mt-16 border border-border bg-card p-12 text-center"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="mt-14 space-y-8"
             >
-              <div className="font-serif text-3xl italic text-foreground">
-                Sua solicitação foi recebida.
+              <div className="border border-border bg-card p-8">
+                <div className="text-[10px] tracking-emblem text-muted-foreground">
+                  — INSTRUÇÃO —
+                </div>
+                <h2 className="mt-4 font-serif text-2xl italic text-foreground md:text-3xl">
+                  Copie a mensagem abaixo e envie para o nosso e-mail.
+                </h2>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                  Sua solicitação só será considerada após o envio do e-mail.
+                  Não altere o conteúdo da mensagem.
+                </p>
+
+                <div className="mt-6 flex flex-col gap-3 border-t border-border/60 pt-6 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <div className="text-[10px] tracking-emblem text-muted-foreground/70">
+                      ENVIAR PARA
+                    </div>
+                    <a
+                      href={mailtoHref}
+                      className="font-serif text-lg italic text-foreground transition hover:text-accent"
+                    >
+                      {EMAIL_DESTINO}
+                    </a>
+                  </div>
+                  <a
+                    href={mailtoHref}
+                    className="border border-foreground px-6 py-3 text-center text-[11px] tracking-emblem text-foreground transition hover:bg-foreground hover:text-background"
+                  >
+                    ABRIR NO E-MAIL →
+                  </a>
+                </div>
               </div>
-              <div className="mt-4 divider-line mx-auto w-24" />
-              <p className="mt-6 text-sm text-muted-foreground">
-                Caso seu perfil corresponda, entraremos em contato.
-              </p>
-              <p className="mt-2 text-xs tracking-wider2 text-muted-foreground/70">
-                Discrição é parte do processo.
-              </p>
+
+              <div className="border border-border bg-card">
+                <div className="flex items-center justify-between border-b border-border/60 px-5 py-3">
+                  <div className="text-[10px] tracking-emblem text-muted-foreground">
+                    MENSAGEM GERADA
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="text-[10px] tracking-emblem text-foreground/80 transition hover:text-foreground"
+                  >
+                    {copied ? "✓ COPIADO" : "COPIAR"}
+                  </button>
+                </div>
+                <pre className="whitespace-pre-wrap px-5 py-5 font-serif text-[15px] leading-relaxed text-foreground/90">
+{message}
+                </pre>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 text-[11px] tracking-wider2 text-muted-foreground/70">
+                <button
+                  type="button"
+                  onClick={() => setSent(false)}
+                  className="underline-offset-4 hover:underline"
+                >
+                  ← Editar dados
+                </button>
+                <span>Discrição é parte do processo.</span>
+              </div>
             </motion.div>
           ) : (
             <form onSubmit={onSubmit} className="mt-14 space-y-8" noValidate>
@@ -107,7 +197,7 @@ function ContactPage() {
                   type="submit"
                   className="border border-foreground px-10 py-3 text-[11px] tracking-emblem text-foreground transition hover:bg-foreground hover:text-background"
                 >
-                  SOLICITAR CONTATO →
+                  GERAR SOLICITAÇÃO →
                 </button>
               </div>
             </form>

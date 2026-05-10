@@ -197,7 +197,7 @@ function ContactPage() {
                   type="submit"
                   className="border border-foreground px-10 py-3 text-[11px] tracking-emblem text-foreground transition hover:bg-foreground hover:text-background"
                 >
-                  SOLICITAR CONTATO →
+                  GERAR SOLICITAÇÃO →
                 </button>
               </div>
             </form>

@@ -26,8 +26,31 @@ const schema = z.object({
   mensagem: z.string().trim().max(1000).optional().or(z.literal("")),
 });
 
+const EMAIL_DESTINO = "fraternitasfidelis@gmail.com";
+
+function buildMessage(d: { nome: string; idade: number; cidade: string; motivo: string; mensagem?: string }) {
+  return [
+    "Solicitação de Contato — Fraternitas Fidelis",
+    "",
+    `Nome completo: ${d.nome}`,
+    `Idade: ${d.idade}`,
+    `Cidade: ${d.cidade}`,
+    "",
+    "Motivo do interesse:",
+    d.motivo,
+    ...(d.mensagem && d.mensagem.trim()
+      ? ["", "Mensagem adicional:", d.mensagem.trim()]
+      : []),
+    "",
+    "—",
+    "Enviado através do site institucional.",
+  ].join("\n");
+}
+
 function ContactPage() {
   const [sent, setSent] = useState(false);
+  const [message, setMessage] = useState("");
+  const [copied, setCopied] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -45,9 +68,25 @@ function ContactPage() {
       return;
     }
     setErrors({});
+    setMessage(buildMessage(parsed.data));
     setSent(true);
-    toast.success("Solicitação registrada. Aguarde retorno.");
+    setCopied(false);
   };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(message);
+      setCopied(true);
+      toast.success("Mensagem copiada.");
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      toast.error("Não foi possível copiar. Selecione manualmente.");
+    }
+  };
+
+  const mailtoHref = `mailto:${EMAIL_DESTINO}?subject=${encodeURIComponent(
+    "Solicitação de Contato — Fraternitas Fidelis",
+  )}&body=${encodeURIComponent(message)}`;
 
   return (
     <div className="min-h-screen bg-background">
